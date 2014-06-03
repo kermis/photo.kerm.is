@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Photo.kerm.is</title>
+    <style>
+    /* apply a natural box layout model to all elements */
+        *, *:before, *:after {
+          -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+         }
+        body{
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            padding-top: 200px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: subpixel-antialiased;
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+        }
+        #inputCanvas{
+            position: absolute;
+            left: 50%;
+            top: 10%;
+            margin-left: -160px;
+            z-index: 120;
+        }
+        #debug{
+            font-family: monospace;
+            font-weight: 800;
+            font-size: 20pt;
+        }
+        .three-js-renderer{
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+        .arrow{
+            height: 100%;
+            position: absolute;
+            top: 0;
+            width: 10%;
+            z-index: 200;
+            opacity: 0.7;
+            font-size: 3rem;
+            font-weight: 800;
+            color: rgba(255,255,255, 1);
+            padding: 10px;
+            padding-top: 20%;
+            line-height: 2rem;
+        }
+        .arrow:hover{
+            opacity: 1;
+            cursor: pointer;
+        }
+        .arrow-l{
+            left: 0;
+            background: -moz-linear-gradient(left, rgba(0,0,0,0.6) 0%, rgba(255,255,255,0) 100%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(0,0,0,0.6)), color-stop(100%,rgba(255,255,255,0))); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(left, rgba(0,0,0,0.6) 0%,rgba(255,255,255,0) 100%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(left, rgba(0,0,0,0.6) 0%,rgba(255,255,255,0) 100%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(left, rgba(0,0,0,0.6) 0%,rgba(255,255,255,0) 100%); /* IE10+ */
+            background: linear-gradient(to right, rgba(0,0,0,0.6) 0%,rgba(255,255,255,0) 100%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99000000', endColorstr='#00ffffff',GradientType=1 ); /* IE6-9 */
+        }
+        .arrow-r{
+            right: 0;
+            background: -moz-linear-gradient(left, rgba(255,255,255,0) 0%, rgba(0,0,0,0.59) 99%, rgba(0,0,0,0.6) 100%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,255,255,0)), color-stop(99%,rgba(0,0,0,0.59)), color-stop(100%,rgba(0,0,0,0.6))); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(left, rgba(255,255,255,0) 0%,rgba(0,0,0,0.59) 99%,rgba(0,0,0,0.6) 100%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(left, rgba(255,255,255,0) 0%,rgba(0,0,0,0.59) 99%,rgba(0,0,0,0.6) 100%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(left, rgba(255,255,255,0) 0%,rgba(0,0,0,0.59) 99%,rgba(0,0,0,0.6) 100%); /* IE10+ */
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%,rgba(0,0,0,0.59) 99%,rgba(0,0,0,0.6) 100%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#99000000',GradientType=1 ); /* IE6-9 */
+        }
+        .arrow-text{
+            text-align: center;
+            font-weight: 400;
+            font-size: 14pt;
+            line-height: 17pt;
+        }
+        .effect-bar{
+            width: 70%;
+            height: auto;
+            position: absolute;
+            left: 15%;
+            top: 3%;
+            z-index: 220;
+        }
+        .effect-bar a.btn{
+            width: 50%;
+            float: left;
+            display: block;
+            color: rgba(255,255,255, 0.7);
+            text-decoration: none;
+            padding: 15px 0 15px 0;
+            text-shadow: 0 0 5px rgba(0,0,0,0.7);
+            font-size: 14pt;
+        }
+        .presets span.btn-effect{
+            text-decoration: none;
+            color: rgba(255,255,255, 0.7);
+            width: 9%;
+            display: block;
+            /*background: red;*/
+            text-shadow: 0 0 2.5px rgba(0,0,0,0.7);
+            float: left;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            cursor: pointer;
+            font-size: 10pt;
+        }
+        .presets{
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            z-index: 300;
+            background: black;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="inputCanvas" width="320" height="240" style="display: none;"></canvas>
+    <video id="inputVideo" autoplay loop style="display: none;"></video>
+    <div id="debug" style="position: absolute; width: 100%; text-align: center; top: 80%;">
+    </div>
+    <div class="arrow arrow-l">
+        &lt;<br><br>
+        <div class="arrow-text">Previous<br>Scene</div>
+    </div>
+    <div class="arrow arrow-r">
+        &gt;<br><br>
+        <div class="arrow-text">Next<br>Scene</div>
+    </div>
+    <!-- <div class="effect-bar">
+        <a href="#" class="btn previous-effect">Previous Effect</a>
+        <a href="#" class="btn next-effect">Next Effect</a>
+    </div> -->
+    <div class="presets">
+        <span class="btn-effect">Exposure</span>
+        <span class="btn-effect">Pixelate</span>
+        <span class="btn-effect">Hue</span>
+        <span class="btn-effect">Kaleidoscope</span>
+        <span class="btn-effect">Solarize</span>
+        <span class="btn-effect">Posterize</span>
+        <span class="btn-effect">Minimum</span>
+        <span class="btn-effect">Sepia</span>
+        <span class="btn-effect">Pinch</span>
+        <span class="btn-effect">Edge</span>
+        <span class="btn-effect">Grayscale</span>
+    </div>
+    <!--<script type="text/javascript" src="js/headtrackr.js"></script>-->
+    <script type="text/javascript" src="js/jsmanipulate.js"></script>
+    <script type="text/javascript" src="js/three.min.js"></script>
+    <script type="text/javascript" src="js/tween.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script>
+    var videoInput = document.getElementById('inputVideo');
+    var canvasInput = document.getElementById('inputCanvas');
+
+    var effectIndex = 1;
+     var effectsArray = ['blur','brightness','bump','circlesmear','contrast','crosssmear','diffusion','dither','edge','emboss','exposure','gain','gamma','grayscale','hue','invert','kaleidoscope','lensdistortion','linesmear','maximum','median','minimum','noise','opacity','pinch','pixelate','posterize','rgbadjust','saturation','sawtoothripple','sepia','sharpen','sineripple','solarize','sparkle','squaresmear','threshold','triangleripple','twirl','vignette','waterripple']
+
+
+    //find user media and stick in the video
+    navigator.getUserMedia  = navigator.getUserMedia ||
+                          navigator.webkitGetUserMedia ||
+                          navigator.mozGetUserMedia ||
+                          navigator.msGetUserMedia;
+
+    var video = document.querySelector('video');
+
+    if (navigator.getUserMedia) {
+      navigator.getUserMedia({audio: false, video: true}, function(stream) {
+        video.src = window.URL.createObjectURL(stream);
+      }, errorCallback);
+    } else {
+      video.src = 'somevideo.webm'; // fallback.
+    }
+
+    function errorCallback(){}
+
+    var fc = new frameConverter(videoInput,canvasInput);
+    fc.setEffect(effectsArray[effectIndex]);
+
+
+    document.onkeydown= function(e){
+
+        switch(e.keyCode){
+            case 32: //space
+                takeAPicture();
+                break;
+            case 37: //left
+                previousScene();
+                break;
+            case 39: //right
+                nextScene();
+                break;
+            case 38: //up
+                switchEffectPrevious();
+                break;
+            case 40: //down
+                switchEffect();
+                break;
+        }
+    }
+
+    function switchEffect(name){
+        if(name == '' || name == undefined){
+            effectIndex++;
+            if(effectIndex > effectsArray.length -1){
+                effectIndex = 0;
+            }
+            var effect = effectsArray[effectIndex];
+
+            fc.setEffect(effect)
+
+            console.log(effect);
+
+
+        }else{
+            fc.setEffect(name)
+        }
+    }
+    function switchEffectPrevious(){
+        effectIndex--;
+        if(effectIndex < 0){
+            effectIndex = effectsArray.length-1;
+        }
+
+        var effect = effectsArray[effectIndex];
+
+        fc.setEffect(effect)
+
+        console.log(effect);
+
+
+    }
+
+    function frameConverter(video, canvas) {
+
+        // Set up our frame converter
+        this.video = video;
+        this.viewport = canvas.getContext("2d");
+        this.width = canvas.width;
+        this.height = canvas.height;
+        // Create the frame-buffer canvas
+        this.framebuffer = document.createElement("canvas");
+        this.framebuffer.width = this.width;
+        this.framebuffer.height = this.height;
+        this.ctx = this.framebuffer.getContext("2d");
+         // flip the video horizontally
+        this.ctx.translate(this.width, 0);
+        this.ctx.scale(-1, 1);
+
+        // Default video effect is blur
+        this.effect = JSManipulate.blur;
+        // This variable used to pass ourself to event call-backs
+        var self = this;
+        // Start rendering when the video is playing
+        this.video.addEventListener("play", function() {
+            self.render();
+        }, false);
+
+        // Change the image effect to be applied
+        this.setEffect = function(effect) {
+            if (effect in JSManipulate) {
+                this.effect = JSManipulate[effect];
+            }
+        }
+
+        // Rendering call-back
+        this.render = function() {
+            if (this.video.paused || this.video.ended) {
+                return;
+            }
+            this.renderFrame();
+            var self = this;
+            // Render every 10 ms
+            setTimeout(function() {
+                self.render();
+            }, 10);
+        };
+
+        // Compute and display the next frame
+        this.renderFrame = function() {
+            // Acquire a video frame from the video element
+            this.ctx.drawImage(this.video, 0, 0, this.video.videoWidth,
+                this.video.videoHeight, 0, 0, this.width, this.height);
+            var data = this.ctx.getImageData(0, 0, this.width, this.height);
+            // Apply image effect
+            this.effect.filter(data, this.effect.defaultValues);
+            // Render to viewport
+            this.viewport.putImageData(data, 0, 0);
+            return;
+        };
+    };
+
+
+    /*
+    For facetracking
+     */
+    // var htracker = new headtrackr.Tracker({
+    //     calcAngles: true
+    // });
+    // htracker.init(videoInput, canvasInput);
+    // htracker.start();
+
+
+    // document.addEventListener("facetrackingEvent", function(e) {
+    //     JSManipulate.lensdistortion.filter(data, {refraction: 3.0, radius: 75});
+    // }, true);
+
+    </script>
+
+</body>
+
+</html>
