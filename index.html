@@ -24,6 +24,13 @@
             top: 0;
             left: 0;
             overflow: hidden;
+
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         #inputCanvas{
             position: absolute;
@@ -126,6 +133,33 @@
             z-index: 300;
             background: black;
         }
+        .picture-button{
+            width: 30%;
+            position: absolute;
+            bottom: 55px;
+            left: 35%;
+            padding: 20px;
+            font-size: 14pt;
+            z-index: 300;
+
+            display: inline-block;
+            outline: none;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            padding: .5em 2em .55em;
+            text-shadow: 0 1px 1px rgba(0,0,0,.3);
+            border-radius: 200px;
+            box-shadow: 0 1px 2px rgba(0,0,0,.2);
+
+            color: #fef4e9;
+            border: solid 1px #800000;
+            background: #9F0000;
+            background: -webkit-gradient(linear, left top, left bottom, from(#d50101), to(#9F0000));
+            background: -moz-linear-gradient(top,  #d50101,  #9F0000);
+            filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#d50101', endColorstr='#9F0000');
+        }
+        }
     </style>
 </head>
 
@@ -158,6 +192,9 @@
         <span class="btn-effect">Pinch</span>
         <span class="btn-effect">Edge</span>
         <span class="btn-effect">Grayscale</span>
+    </div>
+    <div class="picture-button">
+        Take a picture !
     </div>
     <!--<script type="text/javascript" src="js/headtrackr.js"></script>-->
     <script type="text/javascript" src="js/jsmanipulate.js"></script>
