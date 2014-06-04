@@ -159,6 +159,116 @@
             background: -moz-linear-gradient(top,  #d50101,  #9F0000);
             filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#d50101', endColorstr='#9F0000');
         }
+        /*.aperture{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: rgba(255,255,255, 0.9);
+            z-index: 350;
+        }*/
+        .aperture {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          border-radius: 100%;
+          /*z-index: 350;*/
+        }
+
+        .aperture-part {
+          position:absolute;
+          border-radius: 100%;
+          background: #333;
+          /*opacity: 0.9;*/
+          border: solid rgba(0,0,0,0.5) 1px;
+
+          transition :all 2.5s ease-in-out;
+          }
+
+        .aperture-part:after {
+           content: "";
+           position: absolute;
+           width: 50%;
+           height: 50%;
+           border-radius: 50%;
+        }
+        .aperture-part.number-1{
+            z-index: 358;
+        }
+        .aperture-part.number-2{
+            z-index: 357;
+        }
+        .aperture-part.number-3{
+            z-index: 356;
+        }
+        .aperture-part.number-4{
+            z-index: 355;
+        }
+        .aperture-part.number-5{
+            z-index: 354;
+        }
+        .aperture-part.number-6{
+            z-index: 353;
+        }
+        .aperture-part.number-7{
+            z-index: 352;
+        }
+        .aperture-part.number-8{
+            z-index: 351;
+        }
+        .message{
+            display: block;
+            height: 20px;
+            z-index: 460;
+            top: 30%;
+            left: 0;
+            position: absolute;
+            width: 100%;
+            text-align: center;
+        }
+        .message .text{
+            color: white;
+            text-shadow: 0 0 2px rgba(0,0,0,0.5);
+            font-size: 14pt;
+            font-weight: 100;
+            letter-spacing: 1px;
+            font-family: Georgia, Times, "Times New Roman", serif;
+            font-style: italic;
+            /*-webkit-font-smoothing: subpixel-antialiased;*/
+        }
+        .message .arrow{
+            padding: 0;
+            opacity: 1;
+            position: relative;
+            margin-left: 15px;
+            margin-right: 15px;
+            display: inline-block;
+            cursor: default;
+            background-image: url('/img/arrow.svg');
+            background-position: 50% 50%;
+            background-repeat: no-repeat;
+            width: 30px;
+            height: 18px;
+            -webkit-transform: rotate(270deg);
+            -moz-transform: rotate(270deg);
+            -ms-transform: rotate(270deg);
+            -o-transform: rotate(270deg);
+            transform: rotate(270deg);
+            -webkit-animation: arrow-animation .3s infinite alternate ease-in-out
+        }
+
+        @-webkit-keyframes arrow-animation
+        {
+        from {top: 0;}
+        to {top: -5px;}
+        }
+
+        /* Standard syntax */
+        @keyframes arrow-animation
+        {
+        from {top: 0;}
+        to {top: -5px;}
         }
     </style>
 </head>
@@ -196,167 +306,33 @@
     <div class="picture-button">
         Take a picture !
     </div>
+
+    <div class="message">
+        <span class="arrow"></span>
+        <span class="text">Please allow access from the menu above</span>
+        <span class="arrow"></span>
+    </div>
+
+    <div class="aperture">
+        <div class="aperture-part number-1"></div>
+        <div class="aperture-part number-2"></div>
+        <div class="aperture-part number-3"></div>
+        <div class="aperture-part number-4"></div>
+        <div class="aperture-part number-5"></div>
+        <div class="aperture-part number-6"></div>
+        <div class="aperture-part number-7"></div>
+        <div class="aperture-part number-8"></div>
+    </div>
     <!--<script type="text/javascript" src="js/headtrackr.js"></script>-->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script type="text/javascript" src="js/jsmanipulate.js"></script>
     <script type="text/javascript" src="js/three.min.js"></script>
     <script type="text/javascript" src="js/tween.js"></script>
+    <script type="text/javascript" src="js/effects.js"></script>
+    <script type="text/javascript" src="js/aperture.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
     <script>
-    var videoInput = document.getElementById('inputVideo');
-    var canvasInput = document.getElementById('inputCanvas');
 
-    var effectIndex = 1;
-     var effectsArray = ['blur','brightness','bump','circlesmear','contrast','crosssmear','diffusion','dither','edge','emboss','exposure','gain','gamma','grayscale','hue','invert','kaleidoscope','lensdistortion','linesmear','maximum','median','minimum','noise','opacity','pinch','pixelate','posterize','rgbadjust','saturation','sawtoothripple','sepia','sharpen','sineripple','solarize','sparkle','squaresmear','threshold','triangleripple','twirl','vignette','waterripple']
-
-
-    //find user media and stick in the video
-    navigator.getUserMedia  = navigator.getUserMedia ||
-                          navigator.webkitGetUserMedia ||
-                          navigator.mozGetUserMedia ||
-                          navigator.msGetUserMedia;
-
-    var video = document.querySelector('video');
-
-    if (navigator.getUserMedia) {
-      navigator.getUserMedia({audio: false, video: true}, function(stream) {
-        video.src = window.URL.createObjectURL(stream);
-      }, errorCallback);
-    } else {
-      video.src = 'somevideo.webm'; // fallback.
-    }
-
-    function errorCallback(){}
-
-    var fc = new frameConverter(videoInput,canvasInput);
-    fc.setEffect(effectsArray[effectIndex]);
-
-
-    document.onkeydown= function(e){
-
-        switch(e.keyCode){
-            case 32: //space
-                takeAPicture();
-                break;
-            case 37: //left
-                previousScene();
-                break;
-            case 39: //right
-                nextScene();
-                break;
-            case 38: //up
-                switchEffectPrevious();
-                break;
-            case 40: //down
-                switchEffect();
-                break;
-        }
-    }
-
-    function switchEffect(name){
-        if(name == '' || name == undefined){
-            effectIndex++;
-            if(effectIndex > effectsArray.length -1){
-                effectIndex = 0;
-            }
-            var effect = effectsArray[effectIndex];
-
-            fc.setEffect(effect)
-
-            console.log(effect);
-
-
-        }else{
-            fc.setEffect(name)
-        }
-    }
-    function switchEffectPrevious(){
-        effectIndex--;
-        if(effectIndex < 0){
-            effectIndex = effectsArray.length-1;
-        }
-
-        var effect = effectsArray[effectIndex];
-
-        fc.setEffect(effect)
-
-        console.log(effect);
-
-
-    }
-
-    function frameConverter(video, canvas) {
-
-        // Set up our frame converter
-        this.video = video;
-        this.viewport = canvas.getContext("2d");
-        this.width = canvas.width;
-        this.height = canvas.height;
-        // Create the frame-buffer canvas
-        this.framebuffer = document.createElement("canvas");
-        this.framebuffer.width = this.width;
-        this.framebuffer.height = this.height;
-        this.ctx = this.framebuffer.getContext("2d");
-         // flip the video horizontally
-        this.ctx.translate(this.width, 0);
-        this.ctx.scale(-1, 1);
-
-        // Default video effect is blur
-        this.effect = JSManipulate.blur;
-        // This variable used to pass ourself to event call-backs
-        var self = this;
-        // Start rendering when the video is playing
-        this.video.addEventListener("play", function() {
-            self.render();
-        }, false);
-
-        // Change the image effect to be applied
-        this.setEffect = function(effect) {
-            if (effect in JSManipulate) {
-                this.effect = JSManipulate[effect];
-            }
-        }
-
-        // Rendering call-back
-        this.render = function() {
-            if (this.video.paused || this.video.ended) {
-                return;
-            }
-            this.renderFrame();
-            var self = this;
-            // Render every 10 ms
-            setTimeout(function() {
-                self.render();
-            }, 10);
-        };
-
-        // Compute and display the next frame
-        this.renderFrame = function() {
-            // Acquire a video frame from the video element
-            this.ctx.drawImage(this.video, 0, 0, this.video.videoWidth,
-                this.video.videoHeight, 0, 0, this.width, this.height);
-            var data = this.ctx.getImageData(0, 0, this.width, this.height);
-            // Apply image effect
-            this.effect.filter(data, this.effect.defaultValues);
-            // Render to viewport
-            this.viewport.putImageData(data, 0, 0);
-            return;
-        };
-    };
-
-
-    /*
-    For facetracking
-     */
-    // var htracker = new headtrackr.Tracker({
-    //     calcAngles: true
-    // });
-    // htracker.init(videoInput, canvasInput);
-    // htracker.start();
-
-
-    // document.addEventListener("facetrackingEvent", function(e) {
-    //     JSManipulate.lensdistortion.filter(data, {refraction: 3.0, radius: 75});
-    // }, true);
 
     </script>
 

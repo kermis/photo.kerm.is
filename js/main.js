@@ -440,17 +440,17 @@ function takeAPicture() {
     window.open(renderer.domElement.toDataURL('image/png'), 'screenshot_' + Date.now());
 }
 
-document.getElementsByClassName('arrow-l')[0].addEventListener('click', function() {
+$('arrow-l').on('click', function() {
     previousScene();
-}, false);
+});
 
-document.getElementsByClassName('picture-button')[0].addEventListener('click', function() {
+$('.picture-button').on('click', function() {
     takeAPicture();
-}, false);
+});
 
-document.getElementsByClassName('arrow-r')[0].addEventListener('click', function() {
+$('arrow-r').on('click', function() {
     nextScene();
-}, false);
+});
 
 var fxBtns = document.getElementsByClassName('btn-effect')
 for (var i = 0; i < fxBtns.length; i++) {
