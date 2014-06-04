@@ -23,8 +23,6 @@ if (annyang) {
         }
     };
 
-    console.log(commands);
-
     // Add our commands to annyang
     annyang.addCommands(commands);
 

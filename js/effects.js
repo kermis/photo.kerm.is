@@ -59,9 +59,6 @@ var videoInput = document.getElementById('inputVideo');
 
             fc.setEffect(effect)
 
-            console.log(effect);
-
-
         }else{
             fc.setEffect(name)
         }
@@ -75,10 +72,6 @@ var videoInput = document.getElementById('inputVideo');
         var effect = effectsArray[effectIndex];
 
         fc.setEffect(effect)
-
-        console.log(effect);
-
-
     }
 
     function frameConverter(video, canvas) {
