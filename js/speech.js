@@ -19,7 +19,16 @@ if (annyang) {
         },
         'go to :term': function(term){
           console.log('going to '+term+'.kerm.is')
-          window.location = 'http://'+term+'.kerm.is';
+          // window.location = 'http://'+term+'.kerm.is';
+        },
+        'next scene': function(){
+          nextScene();
+        },
+        'previous scene': function(){
+          previousScene();
+        },
+        ':term effect': function(term){
+          switchEffect(term);
         }
     };
 

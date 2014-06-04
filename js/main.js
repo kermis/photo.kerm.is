@@ -440,7 +440,7 @@ function takeAPicture() {
     window.open(renderer.domElement.toDataURL('image/png'), 'screenshot_' + Date.now());
 }
 
-$('arrow-l').on('click', function() {
+$('.arrow-l').on('click', function() {
     previousScene();
 });
 
@@ -448,7 +448,7 @@ $('.picture-button').on('click', function() {
     takeAPicture();
 });
 
-$('arrow-r').on('click', function() {
+$('.arrow-r').on('click', function() {
     nextScene();
 });
 
