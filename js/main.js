@@ -233,7 +233,8 @@ var camPositions = [{
         stageLoader.load('js/kerm.is.js', function(mesh) {
 
             var castleText = mesh.clone();
-            var scale = 0.3;
+
+            var scale = 0.25;
             mesh.scale.set(scale, scale, scale);
             for (var i = 0; i < mesh.children.length; i++) {
                 mesh.children[i].children[0].material = new THREE.MeshLambertMaterial({
@@ -242,7 +243,7 @@ var camPositions = [{
 
             };
             mesh.rotation.y = 1.57;
-            mesh.position.set(1.2, 1.5, -19.8)
+            mesh.position.set(1.2, 2.7, -19.8)
             scene.add(mesh);
 
             // var txt2 = mesh.clone();
@@ -439,13 +440,17 @@ function takeAPicture() {
     window.open(renderer.domElement.toDataURL('image/png'), 'screenshot_' + Date.now());
 }
 
-document.getElementsByClassName('arrow-l')[0].addEventListener('click', function() {
+$('.arrow-l').on('click', function() {
     previousScene();
-}, false);
+});
 
-document.getElementsByClassName('arrow-r')[0].addEventListener('click', function() {
+$('.picture-button').on('click', function() {
+    takeAPicture();
+});
+
+$('.arrow-r').on('click', function() {
     nextScene();
-}, false);
+});
 
 var fxBtns = document.getElementsByClassName('btn-effect')
 for (var i = 0; i < fxBtns.length; i++) {
