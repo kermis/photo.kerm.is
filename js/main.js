@@ -437,7 +437,17 @@ function getRandomColor() {
 }
 
 function takeAPicture() {
-    window.open(renderer.domElement.toDataURL('image/png'), 'screenshot_' + Date.now());
+    downloadURI(renderer.domElement.toDataURL('image/png'), 'screenshot_' + Date.now());
+}
+
+function downloadURI(uri, name) {
+    var link = document.createElement("a");
+    link.download = name;
+    link.href = uri;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    delete link;
 }
 
 $('.arrow-l').on('click', function() {
