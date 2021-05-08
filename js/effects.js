@@ -15,7 +15,7 @@ var videoInput = document.getElementById('inputVideo');
 
     if (navigator.getUserMedia) {
       navigator.getUserMedia({audio: false, video: true}, function(stream) {
-        video.src = window.URL.createObjectURL(stream);
+        video.srcObject = stream;
         openAperture();
       }, errorCallback);
     } else {
